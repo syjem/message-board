@@ -1,9 +1,10 @@
 "use client";
 
 import { z } from "zod";
+import { toast } from "sonner";
 import { useForm } from "react-hook-form";
-import { Dispatch, SetStateAction } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Dispatch, SetStateAction, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useUsername } from "@/contexts/username-context";
+import { handleUsernameSubmit } from "@/app/actions";
 
 const FormSchema = z.object({
   username: z.string().min(2, {
@@ -26,21 +27,34 @@ const FormSchema = z.object({
 
 export function UsernameForm({
   setOpen,
+  username,
 }: {
+  username: string;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
-  const { username, setUsername } = useUsername();
+  const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      username: username,
+      username: username || "",
     },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    setUsername(data.username);
-    setOpen(false);
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.append("username", data.username);
+
+      const result = await handleUsernameSubmit(formData);
+
+      if (result.success || result.unchanged) {
+        setOpen(false);
+      } else {
+        console.error(result.error);
+        toast.error(result.error);
+      }
+    });
   }
 
   return (
@@ -53,13 +67,7 @@ export function UsernameForm({
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input
-                  {...field}
-                  onChange={(e) => {
-                    setUsername(e.target.value);
-                    field.onChange(e);
-                  }}
-                />
+                <Input {...field} disabled={isPending || !!username} />
               </FormControl>
               <FormDescription className="text-white/60">
                 This is your public display name.
@@ -68,8 +76,12 @@ export function UsernameForm({
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full bg-sky-500 hover:bg-sky-600">
-          Enter
+        <Button
+          type="submit"
+          disabled={isPending}
+          className="w-full bg-sky-500 hover:bg-sky-600"
+        >
+          {isPending ? "Creating..." : "Enter"}
         </Button>
       </form>
     </Form>

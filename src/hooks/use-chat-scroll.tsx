@@ -13,5 +13,14 @@ export function useChatScroll() {
     });
   }, []);
 
-  return { containerRef, scrollToBottom };
+  const scrollToTop = useCallback(() => {
+    if (!containerRef.current) return;
+
+    containerRef.current.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
+
+  return { containerRef, scrollToBottom, scrollToTop };
 }

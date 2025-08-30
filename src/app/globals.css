@@ -122,12 +122,12 @@
 
   /* Scrollbar styles */
   ::-webkit-scrollbar {
-    width: 6px;
+    width: 3px;
     height: 10px;
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: rgb(148 163 184);
+    background-color: #364153;
     border-radius: 9999px;
   }
 

@@ -1,6 +1,6 @@
 import React from "react";
 
-export const BackgroundDesignTop = () => {
+export const BackgroundTop = () => {
   return (
     <div
       aria-hidden="true"
@@ -17,7 +17,7 @@ export const BackgroundDesignTop = () => {
   );
 };
 
-export const BackgroundDesignBottom = () => {
+export const BackgroundBottom = () => {
   return (
     <div
       aria-hidden="true"

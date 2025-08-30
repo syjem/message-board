@@ -1,14 +1,14 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { ChatMessageItem } from "@/components/chat-message";
-import { useChatScroll } from "@/hooks/use-chat-scroll";
-import { type ChatMessage, useRealtimeChat } from "@/hooks/use-realtime-chat";
-import { Button } from "@/components/ui/button";
-import { Send } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { useChatScroll } from "@/hooks/use-chat-scroll";
+import { ChatMessageItem } from "@/components/chat-message";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { type ChatMessage, useRealtimeChat } from "@/hooks/use-realtime-chat";
 
 interface RealtimeChatProps {
   roomName: string;
@@ -31,6 +31,7 @@ export const RealtimeChat = ({
   onMessage,
   messages: initialMessages = [],
 }: RealtimeChatProps) => {
+  const [newMessage, setNewMessage] = useState("");
   const { containerRef, scrollToBottom } = useChatScroll();
 
   const {
@@ -41,7 +42,6 @@ export const RealtimeChat = ({
     roomName,
     username,
   });
-  const [newMessage, setNewMessage] = useState("");
 
   // Merge realtime messages with initial messages
   const allMessages = useMemo(() => {
@@ -98,9 +98,9 @@ export const RealtimeChat = ({
   };
 
   return (
-    <div className="relative flex flex-col h-full">
+    <div className="relative flex flex-col h-[calc(100%-115px)]">
       <div ref={containerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           {allMessages.map((message, index) => {
             const prevMessage = index > 0 ? allMessages[index - 1] : null;
             const showHeader =
@@ -121,8 +121,10 @@ export const RealtimeChat = ({
           })}
         </div>
       </div>
-
-      <form onSubmit={handleSendMessage} className="flex w-full gap-2 p-4">
+      <form
+        onSubmit={handleSendMessage}
+        className="flex w-full gap-2 px-1 py-2"
+      >
         <Textarea
           className={cn(
             "min-h-[44px] max-h-20 flex-1 resize-none rounded-xl border border-gray-700 bg-gray-800 px-4 text-sm text-slate-50 placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200",
@@ -135,7 +137,7 @@ export const RealtimeChat = ({
           onKeyDown={handleKeyDown}
         />
         <Button
-          className="aspect-square rounded-full animate-in fade-in slide-in-from-right-4 duration-300 bg-gray-900"
+          className="aspect-square rounded-full animate-in fade-in slide-in-from-right-4 duration-300 bg-gray-900 hover:bg-gray-950"
           type="submit"
           disabled={!isConnected}
         >
