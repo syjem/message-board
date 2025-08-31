@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Rocket, User } from "lucide-react";
-import { cn, formatDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { UsernameDialog } from "@/components/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -54,13 +54,10 @@ export default function ChatHeader({ username }: { username: string }) {
             <AvatarFallback>ER</AvatarFallback>
           </Avatar>
         </div>
-        <div className="w-full flex flex-col items-start justify-center">
+        <div className="w-full">
           <span className="block w-full py-1.5 font-bold text-sm text-slate-200">
             {username || "Your username"}
           </span>
-          <p className="font-semibold text-xs text-[#acaeb4]">
-            {formatDate(new Date())}
-          </p>
         </div>
       </div>
     </React.Fragment>

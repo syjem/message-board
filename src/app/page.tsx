@@ -15,11 +15,7 @@ export default async function Home() {
       <div className="h-[64px] w-[3px] bg-gray-800 absolute -end-[17px] top-[142px] rounded-e-lg"></div>
       <div className="rounded-xl overflow-hidden w-full h-[572px] bg-gray-800">
         <ChatHeader username={session?.username} />
-        <RealtimeChat
-          messages={messages}
-          roomName="Mini Message Board"
-          username={session?.username}
-        />
+        <RealtimeChat messages={messages} username={session?.username} />
       </div>
     </div>
   );

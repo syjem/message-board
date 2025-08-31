@@ -20,9 +20,15 @@ import { Input } from "@/components/ui/input";
 import { handleUsernameSubmit } from "@/app/actions";
 
 const FormSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
+  username: z
+    .string()
+    .min(2, "Username must be at least 2 characters")
+    .max(50, "Username must be less than 50 characters")
+    .regex(
+      /^[a-zA-Z0-9_\s-]+$/,
+      "Username can only contain letters, numbers, spaces, hyphens, and underscores"
+    )
+    .transform((str) => str.trim()),
 });
 
 export function UsernameForm({
@@ -48,7 +54,11 @@ export function UsernameForm({
 
       const result = await handleUsernameSubmit(formData);
 
-      if (result.success || result.unchanged) {
+      if (result.success) {
+        toast.success(`Welcome to the chat, ${result.username}!`);
+        setOpen(false);
+      } else if (result.unchanged) {
+        toast.info("You're already logged in.");
         setOpen(false);
       } else {
         console.error(result.error);
@@ -81,7 +91,7 @@ export function UsernameForm({
           disabled={isPending}
           className="w-full bg-sky-500 hover:bg-sky-600"
         >
-          {isPending ? "Creating..." : "Enter"}
+          {isPending ? "Creating session..." : "Enter"}
         </Button>
       </form>
     </Form>

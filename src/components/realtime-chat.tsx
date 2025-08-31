@@ -3,45 +3,30 @@
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Send } from "lucide-react";
+import type { Message } from "@/types/chat";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useChatScroll } from "@/hooks/use-chat-scroll";
 import { ChatMessageItem } from "@/components/chat-message";
+import { useRealtimeChat } from "@/hooks/use-realtime-chat";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { type ChatMessage, useRealtimeChat } from "@/hooks/use-realtime-chat";
 
 interface RealtimeChatProps {
-  roomName: string;
   username: string;
-  onMessage?: (messages: ChatMessage[]) => void;
-  messages?: ChatMessage[];
+  messages?: Message[];
 }
 
-/**
- * Realtime chat component
- * @param roomName - The name of the room to join. Each room is a unique chat.
- * @param username - The username of the user
- * @param onMessage - The callback function to handle the messages. Useful if you want to store the messages in a database.
- * @param messages - The messages to display in the chat. Useful if you want to display messages from a database.
- * @returns The chat component
- */
 export const RealtimeChat = ({
-  roomName,
   username,
-  onMessage,
   messages: initialMessages = [],
 }: RealtimeChatProps) => {
   const [newMessage, setNewMessage] = useState("");
   const { containerRef, scrollToBottom } = useChatScroll();
-
   const {
     messages: realtimeMessages,
     sendMessage,
     isConnected,
-  } = useRealtimeChat({
-    roomName,
-    username,
-  });
+  } = useRealtimeChat();
 
   // Merge realtime messages with initial messages
   const allMessages = useMemo(() => {
@@ -54,17 +39,11 @@ export const RealtimeChat = ({
     // Sort by creation date
     const sortedMessages = uniqueMessages.sort(
       (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     );
 
     return sortedMessages;
   }, [initialMessages, realtimeMessages]);
-
-  useEffect(() => {
-    if (onMessage) {
-      onMessage(allMessages);
-    }
-  }, [allMessages, onMessage]);
 
   useEffect(() => {
     // Scroll to bottom whenever messages change
@@ -82,7 +61,7 @@ export const RealtimeChat = ({
 
       if (!newMessage.trim() || !isConnected) return;
 
-      sendMessage(newMessage);
+      sendMessage(newMessage, username);
       setNewMessage("");
     },
     [newMessage, isConnected, sendMessage, username]
@@ -104,7 +83,7 @@ export const RealtimeChat = ({
           {allMessages.map((message, index) => {
             const prevMessage = index > 0 ? allMessages[index - 1] : null;
             const showHeader =
-              !prevMessage || prevMessage.user !== message.user;
+              !prevMessage || prevMessage.username !== message.username;
 
             return (
               <div
@@ -113,7 +92,7 @@ export const RealtimeChat = ({
               >
                 <ChatMessageItem
                   message={message}
-                  isOwnMessage={message.user === username}
+                  isOwnMessage={message.username === username}
                   showHeader={showHeader}
                 />
               </div>

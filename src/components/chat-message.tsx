@@ -1,8 +1,8 @@
 import { cn, formatDate } from "@/lib/utils";
-import type { ChatMessage } from "@/hooks/use-realtime-chat";
+import type { Message } from "@/types/chat";
 
 interface ChatMessageItemProps {
-  message: ChatMessage;
+  message: Message;
   isOwnMessage: boolean;
   showHeader: boolean;
 }
@@ -27,9 +27,9 @@ export const ChatMessageItem = ({
               "justify-end flex-row-reverse": isOwnMessage,
             })}
           >
-            <span className={"font-medium text-white"}>{message.user}</span>
+            <span className={"font-medium text-white"}>{message.username}</span>
             <span className="text-xs text-white/50">
-              {formatDate(message.createdAt)}
+              {formatDate(message.created_at)}
             </span>
           </div>
         )}

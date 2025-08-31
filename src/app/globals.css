@@ -120,6 +120,10 @@
     @apply bg-slate-950 text-white;
   }
 
+  html {
+    scrollbar-gutter: stable;
+  }
+
   /* Scrollbar styles */
   ::-webkit-scrollbar {
     width: 3px;
@@ -133,6 +137,11 @@
 
   ::-webkit-scrollbar-track {
     background: transparent;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #364153 transparent;
   }
 }
 

@@ -1,9 +1,11 @@
-import { connectToMongoDB } from "@/configs/db";
-import { Message } from "@/models/message-schema";
+"use server";
+
+import { createClient } from "@/lib/supabase/server";
 
 export const getMessages = async () => {
-  await connectToMongoDB();
-  const messages = await Message.find();
+  const supabase = await createClient();
 
-  return JSON.parse(JSON.stringify(messages));
+  const { data } = await supabase.from("messages").select(`*`);
+
+  return data || [];
 };

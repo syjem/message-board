@@ -1,75 +1,73 @@
 "use client";
 
+import type { Message } from "@/types/chat";
 import { createClient } from "@/lib/supabase/client";
 import { useCallback, useEffect, useState } from "react";
 
-interface UseRealtimeChatProps {
-  roomName: string;
-  username: string;
-}
-
-export interface ChatMessage {
-  _id: string;
-  text: string;
-  user: string;
-  createdAt: string;
-  initials: string;
-  is_pinned: boolean;
-}
-
-const EVENT_MESSAGE_TYPE = "message";
-
-export function useRealtimeChat({ roomName, username }: UseRealtimeChatProps) {
+export function useRealtimeChat() {
   const supabase = createClient();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [channel, setChannel] = useState<ReturnType<
-    typeof supabase.channel
-  > | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isConnected, setIsConnected] = useState(false);
 
+  const loadMessages = useCallback(async () => {
+    const { data } = await supabase
+      .from("messages")
+      .select("*")
+      .order("created_at", { ascending: true });
+
+    if (data) {
+      setMessages(data);
+    }
+  }, [supabase]);
+
   useEffect(() => {
-    const newChannel = supabase.channel(roomName);
+    // Load initial messages
+    loadMessages();
 
-    newChannel
-      .on("broadcast", { event: EVENT_MESSAGE_TYPE }, (payload) => {
-        setMessages((current) => [...current, payload.payload as ChatMessage]);
-      })
-      .subscribe(async (status) => {
-        if (status === "SUBSCRIBED") {
-          setIsConnected(true);
+    // Subscribe to new messages
+    const channel = supabase
+      .channel("messages-channel")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+        },
+        (payload) => {
+          const newMessage = payload.new as Message;
+          setMessages((current) => [...current, newMessage]);
         }
+      )
+      .subscribe(async (status) => {
+        setIsConnected(status === "SUBSCRIBED");
       });
-
-    setChannel(newChannel);
 
     return () => {
-      supabase.removeChannel(newChannel);
+      supabase.removeChannel(channel);
     };
-  }, [roomName, username, supabase]);
+  }, [supabase, loadMessages]);
 
   const sendMessage = useCallback(
-    async (text: string) => {
-      if (!channel || !isConnected) return;
+    async (text: string, username: string) => {
+      if (!isConnected || !text.trim()) return;
 
-      const message: ChatMessage = {
-        _id: crypto.randomUUID(),
-        text,
-        user: username,
-        initials: "",
-        is_pinned: false,
-        createdAt: new Date().toISOString(),
-      };
+      try {
+        const { error } = await supabase.from("messages").insert({
+          text: text.trim(),
+          username,
+          is_pinned: false,
+        });
 
-      // Update local state immediately for the sender
-      setMessages((current) => [...current, message]);
+        if (error) throw error;
 
-      await channel.send({
-        type: "broadcast",
-        event: EVENT_MESSAGE_TYPE,
-        payload: message,
-      });
+        return { success: true };
+      } catch (error) {
+        console.error("Failed to send message:", error);
+        return { success: false };
+      }
     },
-    [channel, isConnected, username]
+    [isConnected, supabase]
   );
 
   return { messages, sendMessage, isConnected };
