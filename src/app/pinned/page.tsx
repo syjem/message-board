@@ -1,11 +1,11 @@
 import React from "react";
 import { getSession } from "@/lib/sessions";
-import { getMessages } from "@/data/messages";
 import ChatHeader from "@/components/chat-header";
 import { RealtimeChat } from "@/components/realtime-chat";
+import { getPinnedMessages } from "@/data/pinned-message";
 
 export default async function Home() {
-  const messages = await getMessages();
+  const messages = await getPinnedMessages();
   const session = await getSession();
 
   return (

@@ -12,4 +12,6 @@ export interface UserSession {
   username: string;
   last_active: string;
   created_at: string;
+  expires_at: string;
+  is_admin: boolean;
 }

@@ -13,6 +13,7 @@ export const createSession = async (username: string) => {
     const { error } = await supabase.from("user_sessions").insert({
       session_id: sessionId,
       username,
+      is_admin: false,
       expires_at: expiration.toISOString(),
       last_active: new Date().toISOString(),
     });
@@ -32,7 +33,7 @@ export const createSession = async (username: string) => {
 
     return { success: true, sessionId };
   } catch (error) {
-    console.log("Failed to create session:", error);
+    console.error("Failed to create session:", error);
     return { success: false, error: "Failed to create session" };
   }
 };
@@ -49,7 +50,7 @@ export const getSession = async () => {
     // Find session in Supabase and check if it's still valid
     const { data: session, error } = await supabase
       .from("user_sessions")
-      .select("session_id, username, expires_at")
+      .select("session_id, username, expires_at, is_admin")
       .eq("session_id", sessionId)
       .gt("expires_at", new Date().toISOString())
       .single();
@@ -67,6 +68,7 @@ export const getSession = async () => {
     return {
       sessionId: session.session_id,
       username: session.username,
+      is_admin: session.is_admin,
     };
   } catch (error) {
     console.error("Failed to get session:", error);
@@ -88,30 +90,5 @@ export const cleanupExpiredSessions = async () => {
     }
   } catch (error) {
     console.error("Failed to cleanup sessions:", error);
-  }
-};
-
-export const deleteSession = async (sessionId?: string) => {
-  try {
-    const supabase = await createClient();
-    const cookieStore = await cookies();
-
-    const targetSessionId = sessionId || cookieStore.get("session_id")?.value;
-
-    if (!targetSessionId) return { success: false };
-
-    // Delete from database
-    const { error } = await supabase
-      .from("user_sessions")
-      .delete()
-      .eq("session_id", targetSessionId);
-
-    // Delete cookie
-    cookieStore.delete("session_id");
-
-    return { success: !error };
-  } catch (error) {
-    console.error("Failed to delete session:", error);
-    return { success: false };
   }
 };

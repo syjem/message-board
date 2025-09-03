@@ -13,11 +13,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 interface RealtimeChatProps {
   username: string;
+  is_admin: boolean;
   messages?: Message[];
 }
 
 export const RealtimeChat = ({
   username,
+  is_admin,
   messages: initialMessages = [],
 }: RealtimeChatProps) => {
   const [newMessage, setNewMessage] = useState("");
@@ -51,7 +53,7 @@ export const RealtimeChat = ({
   }, [allMessages, scrollToBottom]);
 
   const handleSendMessage = useCallback(
-    (e: React.FormEvent) => {
+    async (e: React.FormEvent) => {
       e.preventDefault();
 
       if (!username || username === "") {
@@ -61,7 +63,11 @@ export const RealtimeChat = ({
 
       if (!newMessage.trim() || !isConnected) return;
 
-      sendMessage(newMessage, username);
+      const result = await sendMessage(newMessage);
+      if (!result?.success) {
+        toast.error(result?.error);
+      }
+
       setNewMessage("");
     },
     [newMessage, isConnected, sendMessage, username]
@@ -91,6 +97,7 @@ export const RealtimeChat = ({
                 className="animate-in fade-in slide-in-from-bottom-4 duration-300"
               >
                 <ChatMessageItem
+                  is_admin={is_admin}
                   message={message}
                   isOwnMessage={message.username === username}
                   showHeader={showHeader}

@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { handleUsernameSubmit } from "@/app/actions";
+import { authenticateUsername } from "@/app/actions/auth/authenticate-username";
 
 const FormSchema = z.object({
   username: z
@@ -52,16 +52,16 @@ export function UsernameForm({
       const formData = new FormData();
       formData.append("username", data.username);
 
-      const result = await handleUsernameSubmit(formData);
+      const result = await authenticateUsername(formData);
 
       if (result.success) {
         toast.success(`Welcome to the chat, ${result.username}!`);
         setOpen(false);
       } else if (result.unchanged) {
-        toast.info("You're already logged in.");
+        toast.info("You're already in");
         setOpen(false);
       } else {
-        console.error(result.error);
+        console.log(result.error);
         toast.error(result.error);
       }
     });
@@ -91,7 +91,7 @@ export function UsernameForm({
           disabled={isPending}
           className="w-full bg-sky-500 hover:bg-sky-600"
         >
-          {isPending ? "Creating session..." : "Enter"}
+          {isPending ? "Confirming..." : "Enter"}
         </Button>
       </form>
     </Form>

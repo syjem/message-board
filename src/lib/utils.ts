@@ -16,3 +16,12 @@ export function formatDate(date: string | Date) {
     hour12: true,
   });
 }
+
+export function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
