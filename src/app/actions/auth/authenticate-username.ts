@@ -16,11 +16,7 @@ export async function authenticateUsername(formData: FormData) {
   try {
     const currentSession = await getSession();
 
-    if (!currentSession) {
-      return { error: "No active session found." };
-    }
-
-    if (currentSession.username === sanitizedUsername) {
+    if (currentSession?.username === sanitizedUsername) {
       return { unchanged: true };
     }
 
