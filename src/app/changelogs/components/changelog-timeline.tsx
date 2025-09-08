@@ -41,8 +41,8 @@ export function ChangelogTimeline() {
         <div className="absolute hidden md:block left-2 top-0 bottom-0 w-px bg-border" />
 
         <div className="space-y-12">
-          {changelogData.map((entry, index) => (
-            <ChangelogEntry key={index} {...entry} />
+          {changelogData.map((entry) => (
+            <ChangelogEntry key={entry.title} {...entry} />
           ))}
         </div>
       </div>

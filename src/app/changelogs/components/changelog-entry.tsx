@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import type { ChangelogEntryProps } from "@/types/changelogs";
+import React from "react";
 
 export function ChangelogEntry({
   date,
@@ -37,18 +38,29 @@ export function ChangelogEntry({
 
           <div className="px-6 flex flex-wrap items-center gap-2 text-white/80">
             Tech: [
-            {tech.map((item) => (
-              <span key={item}>{item}</span>
+            {tech.map((item, index) => (
+              <React.Fragment key={item}>
+                <span>{item}</span>
+                {index !== tech.length - 1 && <span>-</span>}
+              </React.Fragment>
             ))}
             ]
           </div>
 
-          <div className="px-6 text-white/80 flex flex-wrap items-center gap-4">
-            <Link target="__blank" href={repo} className="underline">
+          <div className="px-6 text-white/80 text-sm flex flex-wrap items-center gap-4">
+            <Link
+              target="__blank"
+              href={repo}
+              className="underline hover:no-underline hover:text-purple-500"
+            >
               View GitHub
             </Link>
             {preview && (
-              <Link target="__blank" href={preview} className="underline">
+              <Link
+                target="__blank"
+                href={preview}
+                className="underline hover:no-underline hover:text-purple-500"
+              >
                 Preview
               </Link>
             )}

@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📝 Mini Message Board
 
-## Getting Started
+A simple real-time web-based message board where users can post and view messages — built using **Next.js**, **TypeScript**, **Supabase**, and **Tailwind CSS**.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🔧 Tech Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Framework:** [Next.js](https://nextjs.org/) with [TypeScript](https://www.typescriptlang.org/)
+- **Database & Auth:** [Supabase](https://supabase.com/) (Postgres + Realtime)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Features
 
-## Learn More
+- Clean, responsive UI styled with Tailwind CSS
+- Real-time message updates powered by Supabase Realtime
+- Type-safe development with TypeScript
+- Persistent storage with Supabase (Postgres)
+- Simple, intuitive interface for messages
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📸 Screenshots
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Message Board
 
-## Deploy on Vercel
+![Home Page](./public/messages.png)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Admin View
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+![Message Board](./public/admin.png)
+
+---
+
+## 📦 Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Jem201800538/mini-message-board.git
+   cd mini-message-board
+   ```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+3. **Set up environment variables:**
+
+- Create a .env.local file in the root directory and add your Supabase credentials:
+
+  ```bash
+  NEXT_PUBLIC_SUPABASE_URL="https://your-supabase-project-url.supabase.co"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
+  SUPABASE_SERVICE_ROLE_KEY="your-service-key"
+  ```
+
+4. **Run the development server:**
+
+   ```bash
+   npm run dev
+   ```
+
+## 🌐 Usage
+
+- Open your browser and visit [http://localhost:3000](http://localhost:3000)
+
+## 🛠️ Build for Production
+
+    ```bash
+    npm run build
+    npm run start
+    ```
