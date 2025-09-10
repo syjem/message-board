@@ -40,10 +40,10 @@ export const ChatMessageItem = ({
         <div className="flex items-center">
           <div
             className={cn(
-              "py-2 px-3 text-sm w-fit whitespace-pre-line text-primary-foreground",
+              "py-2 px-3 text-sm w-fit whitespace-pre-line text-primary-foreground rounded-b-xl",
               isOwnMessage
-                ? "bg-sky-500 rounded-s-xl rounded-se-xl"
-                : "bg-gray-500/50 rounded-e-xl rounded-es-xl"
+                ? "bg-sky-500 rounded-tl-xl"
+                : "bg-gray-500/50 rounded-r-xl"
             )}
           >
             {message.text}

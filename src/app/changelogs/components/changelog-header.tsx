@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function ChangelogHeader() {
   return (
-    <header className="text-center my-10 md:my-14">
+    <header className="text-center my-10">
       <h1 className="text-3xl md:text-5xl font-serif font-light mb-6 text-balance text-white">
         Changelogs
       </h1>

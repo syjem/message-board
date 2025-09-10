@@ -1,12 +1,9 @@
 "use client";
 
 import type { Message } from "@/types/chat";
-import { getMessages } from "@/data/messages";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { useCallback, useEffect, useState } from "react";
-import { getPinnedMessages } from "@/data/pinned-message";
-import { sendMessageAction } from "@/app/actions/messages/send-message";
+import { useEffect, useState } from "react";
 
 export function useRealtimeChat() {
   const supabase = createClient();
@@ -14,25 +11,7 @@ export function useRealtimeChat() {
   const [isConnected, setIsConnected] = useState(false);
   const pathname = usePathname();
 
-  const loadMessages = useCallback(async () => {
-    if (pathname === "/") {
-      const data = await getMessages();
-
-      if (data) {
-        setMessages(data);
-      }
-    } else if (pathname === "/pinned") {
-      const data = await getPinnedMessages();
-
-      if (data) {
-        setMessages(data);
-      }
-    }
-  }, [pathname]);
-
   useEffect(() => {
-    loadMessages();
-
     const channel = supabase
       .channel("messages-channel")
       .on(
@@ -102,27 +81,7 @@ export function useRealtimeChat() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [supabase, loadMessages, pathname]);
+  }, [supabase, pathname]);
 
-  const sendMessage = useCallback(
-    async (text: string) => {
-      if (!isConnected || !text.trim()) return;
-
-      try {
-        const result = await sendMessageAction(text, pathname);
-
-        if (!result.success) {
-          console.error(result.error);
-        }
-
-        return result;
-      } catch (error) {
-        console.error("Failed to send message:", error);
-        return { success: false };
-      }
-    },
-    [isConnected, pathname]
-  );
-
-  return { messages, sendMessage, isConnected };
+  return { messages, isConnected };
 }

@@ -8,10 +8,11 @@ import React from "react";
 function BackButton() {
   const router = useRouter();
   return (
-    <div className="max-w-5xl mt-5 mx-auto">
+    <div className="max-w-2xl mt-5 mx-auto px-4 md:px-0">
       <Button
         onClick={router.back}
-        className="text-white bg-inherit hover:bg-inherit"
+        size="icon"
+        className="text-white bg-slate-400/20 hover:bg-slate-300/20 cursor-pointer rounded-full transition-colors"
       >
         <ArrowLeft className="size-5 text-white" />
       </Button>

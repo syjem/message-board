@@ -1,8 +1,9 @@
 "use server";
 
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 
-export const getPinnedMessages = async () => {
+export const getPinnedMessages = cache(async () => {
   const supabase = await createClient();
 
   const { data } = await supabase
@@ -11,4 +12,4 @@ export const getPinnedMessages = async () => {
     .eq("is_pinned", true);
 
   return data || [];
-};
+});

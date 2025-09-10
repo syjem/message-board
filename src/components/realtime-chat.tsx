@@ -9,7 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { useChatScroll } from "@/hooks/use-chat-scroll";
 import { ChatMessageItem } from "@/components/chat-message";
 import { useRealtimeChat } from "@/hooks/use-realtime-chat";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+import { usePathname } from "next/navigation";
+import { sendMessageAction } from "@/app/actions/messages/send-message";
 
 interface RealtimeChatProps {
   username: string;
@@ -22,13 +24,11 @@ export const RealtimeChat = ({
   is_admin,
   messages: initialMessages = [],
 }: RealtimeChatProps) => {
-  const [newMessage, setNewMessage] = useState("");
   const { containerRef, scrollToBottom } = useChatScroll();
-  const {
-    messages: realtimeMessages,
-    sendMessage,
-    isConnected,
-  } = useRealtimeChat();
+  const { messages: realtimeMessages, isConnected } = useRealtimeChat();
+
+  const pathname = usePathname();
+  const isPinnedReadOnly = pathname === "/pinned" && !is_admin;
 
   // Merge realtime messages with initial messages
   const allMessages = useMemo(() => {
@@ -53,32 +53,35 @@ export const RealtimeChat = ({
   }, [allMessages, scrollToBottom]);
 
   const handleSendMessage = useCallback(
-    async (e: React.FormEvent) => {
+    async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+
+      const form = e.currentTarget;
+
+      const formData = new FormData(form);
+      const text = (formData.get("text") as string)?.trim();
 
       if (!username || username === "") {
         toast.error("Enter your username first!");
         return;
       }
 
-      if (!newMessage.trim() || !isConnected) return;
+      if (!text || !isConnected) return;
 
-      const result = await sendMessage(newMessage);
+      const result = await sendMessageAction(text, pathname, username);
       if (!result?.success) {
         toast.error(result?.error);
       }
-
-      setNewMessage("");
+      form.reset();
     },
-    [newMessage, isConnected, sendMessage, username]
+    [isConnected, username, pathname]
   );
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (newMessage.trim()) {
-        handleSendMessage(e);
-      }
+
+      e.currentTarget.form?.requestSubmit();
     }
   };
 
@@ -112,12 +115,13 @@ export const RealtimeChat = ({
         className="flex w-full gap-2 px-1 py-2"
       >
         <Textarea
+          name="text"
+          id="text"
+          readOnly={isPinnedReadOnly}
           className={cn(
             "min-h-[44px] max-h-20 flex-1 resize-none rounded-xl border border-gray-700 bg-gray-800 px-4 text-sm text-slate-50 placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200",
             !isConnected && "opacity-50 cursor-not-allowed"
           )}
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type a message..."
           disabled={!isConnected}
           onKeyDown={handleKeyDown}
@@ -125,7 +129,7 @@ export const RealtimeChat = ({
         <Button
           className="aspect-square rounded-full animate-in fade-in slide-in-from-right-4 duration-300 bg-gray-900 hover:bg-gray-950"
           type="submit"
-          disabled={!isConnected}
+          disabled={!isConnected || isPinnedReadOnly}
         >
           <Send className="size-4" />
         </Button>

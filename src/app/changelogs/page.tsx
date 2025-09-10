@@ -7,7 +7,7 @@ export default function ChangelogPage() {
   return (
     <div className="min-h-screen">
       <BackButton />
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
+      <div className="container mx-auto px-4 max-w-2xl">
         <ChangelogHeader />
         <ChangelogTimeline />
         <ChangelogSummary />
