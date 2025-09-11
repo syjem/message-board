@@ -4,13 +4,13 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Send } from "lucide-react";
 import type { Message } from "@/types/chat";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useCallback, useEffect, useMemo } from "react";
 import { useChatScroll } from "@/hooks/use-chat-scroll";
 import { ChatMessageItem } from "@/components/chat-message";
 import { useRealtimeChat } from "@/hooks/use-realtime-chat";
-import { useCallback, useEffect, useMemo } from "react";
-import { usePathname } from "next/navigation";
 import { sendMessageAction } from "@/app/actions/messages/send-message";
 
 interface RealtimeChatProps {
@@ -30,25 +30,28 @@ export const RealtimeChat = ({
   const pathname = usePathname();
   const isPinnedReadOnly = pathname === "/pinned" && !is_admin;
 
-  // Merge realtime messages with initial messages
+  // Merge initial + realtime, filter, and sort
   const allMessages = useMemo(() => {
-    const mergedMessages = [...initialMessages, ...realtimeMessages];
-    // Remove duplicates based on message id
-    const uniqueMessages = mergedMessages.filter(
+    const merged = [...realtimeMessages, ...initialMessages];
+
+    const unique = merged.filter(
       (message, index, self) =>
         index === self.findIndex((m) => m._id === message._id)
     );
-    // Sort by creation date
-    const sortedMessages = uniqueMessages.sort(
+
+    let filtered = unique;
+
+    if (pathname === "/pinned") {
+      filtered = filtered.filter((msg) => msg.is_pinned);
+    }
+
+    return filtered.sort(
       (a, b) =>
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     );
-
-    return sortedMessages;
-  }, [initialMessages, realtimeMessages]);
+  }, [initialMessages, realtimeMessages, pathname]);
 
   useEffect(() => {
-    // Scroll to bottom whenever messages change
     scrollToBottom();
   }, [allMessages, scrollToBottom]);
 

@@ -1,15 +1,13 @@
 "use client";
 
-import type { Message } from "@/types/chat";
-import { usePathname } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
+import type { Message } from "@/types/chat";
+import { createClient } from "@/lib/supabase/client";
 
 export function useRealtimeChat() {
   const supabase = createClient();
-  const [messages, setMessages] = useState<Message[]>([]);
   const [isConnected, setIsConnected] = useState(false);
-  const pathname = usePathname();
+  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     const channel = supabase
@@ -23,12 +21,7 @@ export function useRealtimeChat() {
         },
         (payload) => {
           const newMessage = payload.new as Message;
-          if (
-            pathname === "/" ||
-            (pathname === "/pinned" && newMessage.is_pinned)
-          ) {
-            setMessages((current) => [...current, newMessage]);
-          }
+          setMessages((current) => [...current, newMessage]);
         }
       )
       .on(
@@ -47,31 +40,14 @@ export function useRealtimeChat() {
       )
       .on(
         "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "messages",
-        },
+        { event: "UPDATE", schema: "public", table: "messages" },
         (payload) => {
           const updatedMessage = payload.new as Message;
-
-          if (pathname === "/") {
-            setMessages((current) =>
-              current.map((msg) =>
-                msg._id === updatedMessage._id ? updatedMessage : msg
-              )
-            );
-          } else if (pathname === "/pinned") {
-            setMessages((current) => {
-              if (!updatedMessage.is_pinned) {
-                return current.filter((msg) => msg._id !== updatedMessage._id);
-              } else {
-                return current.map((msg) =>
-                  msg._id === updatedMessage._id ? updatedMessage : msg
-                );
-              }
-            });
-          }
+          setMessages((current) =>
+            current.map((msg) =>
+              msg._id === updatedMessage._id ? updatedMessage : msg
+            )
+          );
         }
       )
       .subscribe(async (status) => {
@@ -81,7 +57,7 @@ export function useRealtimeChat() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [supabase, pathname]);
+  }, [supabase]);
 
   return { messages, isConnected };
 }
