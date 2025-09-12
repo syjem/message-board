@@ -14,7 +14,7 @@ export default function ChatHeader({ username }: { username: string }) {
   const pathname = usePathname();
 
   return (
-    <React.Fragment>
+    <header className="">
       <div className="flex items-center justify-between px-2.5 border-b border-b-gray-600">
         <span className="flex w-full h-[50px] items-center font-bold text-sm text-white">
           {pathname === "/" ? "Mini Message Board" : "Pinned Messages"}
@@ -84,6 +84,6 @@ export default function ChatHeader({ username }: { username: string }) {
           </span>
         </div>
       </div>
-    </React.Fragment>
+    </header>
   );
 }

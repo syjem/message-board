@@ -130,6 +130,7 @@ export const RealtimeChat = ({
           onKeyDown={handleKeyDown}
         />
         <Button
+          size="icon"
           className="aspect-square rounded-full animate-in fade-in slide-in-from-right-4 duration-300 bg-gray-900 hover:bg-gray-950"
           type="submit"
           disabled={!isConnected || isPinnedReadOnly}
