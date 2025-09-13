@@ -28,8 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        suppressHydrationWarning={true}
-        className={`${geistSans.variable} ${geistMono.variable} antialiased relative h-screen md:h-auto`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased relative h-[100dvh] md:h-auto`}
       >
         <BackgroundTop />
         <BackgroundBottom />

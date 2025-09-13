@@ -1,8 +1,13 @@
 import React from "react";
+import dynamic from "next/dynamic";
 import { getSession } from "@/lib/sessions";
+import FallbackUI from "@/components/fallback-ui";
 import ChatHeader from "@/components/chat-header";
-import { RealtimeChat } from "@/components/realtime-chat";
 import { getPinnedMessages } from "@/data/pinned-message";
+
+const RealtimeChat = dynamic(() => import("@/components/realtime-chat"), {
+  loading: () => <FallbackUI />,
+});
 
 export default async function Home() {
   const messages = await getPinnedMessages();

@@ -14,7 +14,7 @@ export default function ChatHeader({ username }: { username: string }) {
   const pathname = usePathname();
 
   return (
-    <header className="">
+    <header className="sticky top-0 md:static">
       <div className="flex items-center justify-between px-2.5 border-b border-b-gray-600">
         <span className="flex w-full h-[50px] items-center font-bold text-sm text-white">
           {pathname === "/" ? "Mini Message Board" : "Pinned Messages"}

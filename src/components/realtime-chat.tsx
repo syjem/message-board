@@ -19,7 +19,7 @@ interface RealtimeChatProps {
   messages?: Message[];
 }
 
-export const RealtimeChat = ({
+const RealtimeChat = ({
   username,
   is_admin,
   messages: initialMessages = [],
@@ -141,3 +141,5 @@ export const RealtimeChat = ({
     </div>
   );
 };
+
+export default RealtimeChat;
