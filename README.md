@@ -26,7 +26,7 @@ A simple real-time web-based message board where users can post and view message
 
 ### Message Board
 
-![Home Page](./public/messages.png)
+![Home Page](./public/messages.jpeg)
 
 ### Admin View
 

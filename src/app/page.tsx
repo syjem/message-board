@@ -1,13 +1,9 @@
-import React from "react";
-import dynamic from "next/dynamic";
+import React, { Suspense } from "react";
 import { getSession } from "@/lib/sessions";
 import { getMessages } from "@/data/messages";
 import ChatHeader from "@/components/chat-header";
 import FallbackUI from "@/components/fallback-ui";
-
-const RealtimeChat = dynamic(() => import("@/components/realtime-chat"), {
-  loading: () => <FallbackUI />,
-});
+import RealtimeChat from "@/components/realtime-chat";
 
 export default async function Home() {
   const messages = await getMessages();
@@ -21,11 +17,13 @@ export default async function Home() {
       <div className="rounded-xl overflow-hidden w-full h-full md:h-[572px] bg-gray-800">
         <ChatHeader username={session?.username} />
 
-        <RealtimeChat
-          messages={messages}
-          username={session?.username}
-          is_admin={session?.is_admin}
-        />
+        <Suspense fallback={<FallbackUI />}>
+          <RealtimeChat
+            messages={messages}
+            username={session?.username}
+            is_admin={session?.is_admin}
+          />
+        </Suspense>
       </div>
     </div>
   );

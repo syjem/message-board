@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Mini Message Board",
   description:
-    "A simple and fun mini message board for posting and sharing thoughts.",
+    "A chat-like fun mini message board for posting and sharing thoughts.",
 };
 
 export default function RootLayout({

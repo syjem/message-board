@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Send } from "lucide-react";
 import type { Message } from "@/types/chat";
-import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useCallback, useEffect, useMemo } from "react";
@@ -27,9 +26,6 @@ const RealtimeChat = ({
   const { containerRef, scrollToBottom } = useChatScroll();
   const { messages: realtimeMessages, isConnected } = useRealtimeChat();
 
-  const pathname = usePathname();
-  const isPinnedReadOnly = pathname === "/pinned" && !is_admin;
-
   // Merge initial + realtime, filter, and sort
   const allMessages = useMemo(() => {
     const merged = [...realtimeMessages, ...initialMessages];
@@ -39,17 +35,11 @@ const RealtimeChat = ({
         index === self.findIndex((m) => m._id === message._id)
     );
 
-    let filtered = unique;
-
-    if (pathname === "/pinned") {
-      filtered = filtered.filter((msg) => msg.is_pinned);
-    }
-
-    return filtered.sort(
+    return unique.sort(
       (a, b) =>
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     );
-  }, [initialMessages, realtimeMessages, pathname]);
+  }, [initialMessages, realtimeMessages]);
 
   useEffect(() => {
     scrollToBottom();
@@ -71,13 +61,13 @@ const RealtimeChat = ({
 
       if (!text || !isConnected) return;
 
-      const result = await sendMessageAction(text, pathname, username);
+      const result = await sendMessageAction(text);
       if (!result?.success) {
         toast.error(result?.error);
       }
       form.reset();
     },
-    [isConnected, username, pathname]
+    [isConnected, username]
   );
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -115,14 +105,13 @@ const RealtimeChat = ({
       </div>
       <form
         onSubmit={handleSendMessage}
-        className="flex w-full gap-2 px-1 py-2"
+        className="flex w-full gap-2 px-4 md:px-1 py-2"
       >
         <Textarea
           name="text"
           id="text"
-          readOnly={isPinnedReadOnly}
           className={cn(
-            "min-h-[44px] max-h-20 flex-1 resize-none rounded-xl border border-gray-700 bg-gray-800 px-4 text-sm text-slate-50 placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200",
+            "min-h-[44px] max-h-20 flex-1 resize-none rounded-xl border border-gray-700 bg-gray-800 px-4 text-sm text-slate-50 placeholder:text-gray-400 transition-all duration-200",
             !isConnected && "opacity-50 cursor-not-allowed"
           )}
           placeholder="Type a message..."
@@ -133,7 +122,7 @@ const RealtimeChat = ({
           size="icon"
           className="aspect-square rounded-full animate-in fade-in slide-in-from-right-4 duration-300 bg-gray-900 hover:bg-gray-950"
           type="submit"
-          disabled={!isConnected || isPinnedReadOnly}
+          disabled={!isConnected}
         >
           <Send className="size-4" />
         </Button>

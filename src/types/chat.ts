@@ -2,7 +2,6 @@ export interface Message {
   _id: string;
   text: string;
   username: string;
-  is_pinned: boolean;
   created_at: string;
 }
 

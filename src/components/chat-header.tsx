@@ -1,48 +1,23 @@
 "use client";
 
+import Link from "next/link";
 import React, { useState } from "react";
-import { MessagesSquare, Pin, Rocket, User } from "lucide-react";
+import { Rocket, User } from "lucide-react";
 import { cn, getInitials } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { UsernameDialog } from "@/components/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 export default function ChatHeader({ username }: { username: string }) {
   const [open, setOpen] = useState(!username);
-  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 md:static">
       <div className="flex items-center justify-between px-2.5 border-b border-b-gray-600">
         <span className="flex w-full h-[50px] items-center font-bold text-sm text-white">
-          {pathname === "/" ? "Mini Message Board" : "Pinned Messages"}
+          Mini Message Board
         </span>
         <div className="flex items-center gap-x-1.5">
-          {pathname === "/pinned" ? (
-            <Button
-              asChild
-              variant="ghost"
-              size="icon"
-              className="group size-9 bg-inherit hover:bg-gray-600 transition-colors"
-            >
-              <Link href="/">
-                <MessagesSquare className="group-hover:text-gray-100 transition-colors" />
-              </Link>
-            </Button>
-          ) : (
-            <Button
-              asChild
-              variant="ghost"
-              size="icon"
-              className="group size-9 bg-inherit hover:bg-gray-600 transition-colors"
-            >
-              <Link href="/pinned">
-                <Pin className="group-hover:text-gray-100 rotate-45 transition-colors" />
-              </Link>
-            </Button>
-          )}
           <Button
             asChild
             variant="ghost"

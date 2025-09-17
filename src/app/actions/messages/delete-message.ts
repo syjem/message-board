@@ -24,12 +24,12 @@ export async function deleteMessage(messageId: string) {
     .select();
 
   if (error) {
-    console.log("Failed to delete the message.", error);
+    console.error("Failed to delete the message.", error);
     return { success: false, error: "Failed to delete the message." };
   }
 
   if (!data || data.length === 0) {
-    console.log("No rows matched for id:", messageId);
+    console.error("No rows matched for id:", messageId);
     return { success: false, error: "Message not found." };
   }
 

@@ -26,8 +26,8 @@ const changelogData = [
     title: "Final iteration (Next.js + Supabase)",
     description:
       "As the database grew, page reloads slowed things down. Rebuilding with Next.js and Supabase gave the app a modern stack: client-side rendering, real-time updates, and a more scalable backend. Now messages load smoothly without the lag from full page reloads.",
-    repo: "",
-    preview: "",
+    repo: "https://github.com/syjem/message-board",
+    preview: "https://message-board-sigma-liart.vercel.app/",
     tech: ["Next.js", "Supabase", "TypeScript", "Tailwind CSS"],
     isLatest: true,
   },
