@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 
-function FallbackUI() {
+export function RealtimeChatFallback() {
   return (
     <div className="relative flex flex-col h-[calc(100%-115px)]">
       <div className="flex-1 p-4 space-y-4">
@@ -36,5 +36,3 @@ function FallbackUI() {
     </div>
   );
 }
-
-export default FallbackUI;
