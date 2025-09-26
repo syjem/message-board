@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Rocket, User } from "lucide-react";
 import { cn, getInitials } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -9,10 +9,16 @@ import { UsernameDialog } from "@/components/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function ChatHeader({ username }: { username: string }) {
-  const [open, setOpen] = useState(!username);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!username) {
+      setOpen(true);
+    }
+  }, [username]);
 
   return (
-    <header className="sticky top-0 md:static">
+    <header className="sticky top-0 left-0 right-0 md:static">
       <div className="flex items-center justify-between px-2.5 border-b border-b-gray-600">
         <span className="flex w-full h-[50px] items-center font-bold text-sm text-white">
           Mini Message Board

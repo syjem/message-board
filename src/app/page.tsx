@@ -1,9 +1,10 @@
 import { Suspense } from "react";
+import { ROOM_NAME } from "@/lib/room-name";
 import { getSession } from "@/lib/sessions";
 import { getMessages } from "@/data/messages";
 import ChatHeader from "@/components/chat-header";
-import { RealtimeChatFallback } from "@/components/fallback-ui";
 import { RealtimeChat } from "@/components/realtime-chat";
+import { RealtimeChatFallback } from "@/components/fallback-ui";
 
 export default async function Home() {
   const messages = await getMessages();
@@ -19,7 +20,7 @@ export default async function Home() {
         <Suspense fallback={<RealtimeChatFallback />}>
           <RealtimeChat
             messages={messages}
-            roomName="Mini Message Board"
+            roomName={ROOM_NAME}
             username={session?.username}
             isAdmin={session?.is_admin}
           />

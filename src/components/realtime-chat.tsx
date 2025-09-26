@@ -65,20 +65,29 @@ export const RealtimeChat = ({
       const formData = new FormData(form);
       const text = (formData.get("text") as string)?.trim();
 
-      if (!text.trim() || !isConnected) return;
+      if (!text || !isConnected) return;
 
-      if (!username || username === "") {
+      if (!username) {
         toast.error("Enter your username first!");
         return;
       }
 
-      sendMessage(text);
+      // Create optimistic message
+      const message: ChatMessage = {
+        _id: crypto.randomUUID(),
+        text,
+        username,
+        created_at: new Date().toISOString(),
+      };
+
+      // Broadcast and render optimistically
+      await sendMessage(message);
       form.reset();
 
-      const result = await storeMessage(text);
+      const result = await storeMessage(message);
 
       if (!result.success) {
-        console.error(result.error);
+        toast.error(result.error);
       }
     },
     [isConnected, sendMessage, username]
@@ -127,7 +136,7 @@ export const RealtimeChat = ({
           name="text"
           id="text"
           className={cn(
-            "min-h-[44px] max-h-20 flex-1 resize-none rounded-xl border border-gray-700 bg-gray-800 px-4 text-sm text-slate-50 placeholder:text-gray-400 transition-all duration-200",
+            "min-h-[40px] max-h-20 flex-1 resize-none rounded-xl border border-gray-700 bg-gray-800 px-4 text-sm text-slate-50 placeholder:text-gray-400 transition-all duration-200",
             isConnected ? "w-[calc(100%-36px)]" : "w-full"
           )}
           placeholder="Type a message..."

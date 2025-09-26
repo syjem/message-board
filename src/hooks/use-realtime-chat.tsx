@@ -26,6 +26,20 @@ export function useRealtimeChat({ roomName, username }: UseRealtimeChatProps) {
       .on("broadcast", { event: EVENT_MESSAGE_TYPE }, (payload) => {
         setMessages((current) => [...current, payload.payload as ChatMessage]);
       })
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "messages",
+        },
+        (payload) => {
+          const deletedId = payload.old as ChatMessage;
+          setMessages((current) =>
+            current.filter((msg) => msg._id !== deletedId._id)
+          );
+        }
+      )
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
           setIsConnected(true);
@@ -40,15 +54,8 @@ export function useRealtimeChat({ roomName, username }: UseRealtimeChatProps) {
   }, [roomName, username, supabase]);
 
   const sendMessage = useCallback(
-    async (text: string) => {
+    async (message: ChatMessage) => {
       if (!channel || !isConnected) return;
-
-      const message: ChatMessage = {
-        _id: crypto.randomUUID(),
-        text,
-        username,
-        created_at: new Date().toISOString(),
-      };
 
       // Update local state immediately for the sender
       setMessages((current) => [...current, message]);
@@ -59,7 +66,7 @@ export function useRealtimeChat({ roomName, username }: UseRealtimeChatProps) {
         payload: message,
       });
     },
-    [channel, isConnected, username]
+    [channel, isConnected]
   );
 
   return { messages, sendMessage, isConnected };

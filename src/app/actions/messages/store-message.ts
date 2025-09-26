@@ -2,27 +2,30 @@
 
 import { getSession } from "@/lib/sessions";
 import { createClient } from "@/lib/supabase/server";
+import type { ChatMessage } from "@/types/chat-message";
 
-export async function storeMessage(text: string) {
+export async function storeMessage(message: ChatMessage) {
   const supabase = await createClient();
   const session = await getSession();
 
-  if (!session?.username) {
+  if (!session?.username || message.username !== session.username) {
     return { success: false, error: "Unauthorized" };
   }
 
-  if (!text.trim()) {
-    return { success: false, error: "Invalid message" };
-  }
+  const { data, error } = await supabase
+    .from("messages")
+    .insert({
+      _id: message._id,
+      text: message.text,
+      username: session.username,
+      created_at: message.created_at,
+    })
+    .select()
+    .single();
 
-  const { error } = await supabase.from("messages").insert({
-    text: text,
-    username: session.username,
-  });
-
-  if (error) {
+  if (error || !data) {
     return { success: false, error: "Failed to send message" };
   }
 
-  return { success: true };
+  return { success: true, message: data };
 }
