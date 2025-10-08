@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { Rocket, User } from "lucide-react";
+import { User } from "lucide-react";
 import { cn, getInitials } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import React, { useEffect, useState } from "react";
 import { UsernameDialog } from "@/components/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -24,16 +23,6 @@ export default function ChatHeader({ username }: { username: string }) {
           Mini Message Board
         </span>
         <div className="flex items-center gap-x-1.5">
-          <Button
-            asChild
-            variant="ghost"
-            size="icon"
-            className="group size-9 bg-inherit hover:bg-gray-600 transition-colors"
-          >
-            <Link href="/changelogs">
-              <Rocket className="group-hover:text-gray-100 transition-colors" />
-            </Link>
-          </Button>
           <Button
             onClick={() => setOpen(true)}
             variant="ghost"
